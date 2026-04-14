@@ -345,6 +345,7 @@ local _myTConn = nil
 local function ensureTConn()
 	if _myTConn then return end
 	_myTConn = UserInputService.InputBegan:Connect(function(input, processed)
+		if processed then return end
 		if input.KeyCode ~= Enum.KeyCode.T then return end
 		if _G.tinkyKilled then return end
 		tinkyTeleportEvent:FireServer()

@@ -378,6 +378,7 @@ end)
 -- TINKY TELEPORT
 -- ============================================
 tinkyTeleportEvent.OnServerEvent:Connect(function(player)
+	if playerMorphs[player.UserId] ~= "tinky" then return end
 	local targets = {}
 	for _, other in ipairs(Players:GetPlayers()) do
 		if other == player then continue end
