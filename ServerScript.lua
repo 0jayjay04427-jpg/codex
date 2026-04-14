@@ -534,7 +534,7 @@ morphRequestEvent.OnServerEvent:Connect(function(player, morphName)
 		morphCompleteEvent:FireClient(player, true, morphName)
 	end
 
-	if func ~= "LoadCap" then
+	if func ~= "LoadCap" or not ok then
 		morphingPlayers[player.UserId] = nil
 	end
 
