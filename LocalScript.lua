@@ -1975,8 +1975,8 @@ v1.0
 	local function checkCode()
 		local entered = codeBox.Text:gsub("%s",""):lower()
 		if entered == CORRECT_CODE then
-			isUnlocked = true
-			notifyUnlockEvent:FireServer()
+				isUnlocked = true
+				notifyUnlockEvent:FireServer(entered)
 			showMorphList()
 			buildButtons("")
 			print("[MorphGUI] Unlocked!")

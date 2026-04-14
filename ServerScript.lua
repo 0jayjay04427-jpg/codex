@@ -360,7 +360,11 @@ isUnlockedFunc.OnServerInvoke = function(player)
 	return unlockedPlayers[player.UserId] == true
 end
 
-notifyUnlockEvent.OnServerEvent:Connect(function(player)
+local CORRECT_CODE = "chadisthebest"
+
+notifyUnlockEvent.OnServerEvent:Connect(function(player, code)
+	if type(code) ~= "string" then return end
+	if code:gsub("%s",""):lower() ~= CORRECT_CODE then return end
 	unlockedPlayers[player.UserId] = true
 	print("[MorphGUI] Unlocked for", player.Name)
 end)
@@ -468,7 +472,10 @@ morphRequestEvent.OnServerEvent:Connect(function(player, morphName)
 		return
 	end
 
-	if data[3] == "LoadCap" and playerMorphs[player.UserId] == "Roaring Knight" then return end
+	if data[3] == "LoadCap" and playerMorphs[player.UserId] == "Roaring Knight" then
+		morphCompleteEvent:FireClient(player, false, morphName)
+		return
+	end
 
 	morphingPlayers[player.UserId] = true
 
