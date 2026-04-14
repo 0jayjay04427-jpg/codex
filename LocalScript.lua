@@ -385,7 +385,17 @@ end
 -- ============================================
 -- BUILD GUI
 -- ============================================
+local _guiConnections = {}
+local _countdownActive = false
+
 local function buildGUI()
+	-- Disconnect any existing event connections from a previous build
+	for _, conn in ipairs(_guiConnections) do
+		pcall(function() conn:Disconnect() end)
+	end
+	_guiConnections = {}
+	_countdownActive = false
+
 	local old = playerGui:FindFirstChild("MorphGuiReborn_Screen")
 	if old then old:Destroy() end
 
@@ -971,14 +981,14 @@ v1.0
 	end)
 
 	-- Wire up the two new server events
-	morphCompleteEvent.OnClientEvent:Connect(function(success, morphName)
+	table.insert(_guiConnections, morphCompleteEvent.OnClientEvent:Connect(function(success, morphName)
 		hideLoadScreen()
-	end)
+	end))
 
-	morphPrivateEvent.OnClientEvent:Connect(function(morphName)
+	table.insert(_guiConnections, morphPrivateEvent.OnClientEvent:Connect(function(morphName)
 		hideLoadScreen()
 		showPrivatePopup(morphName)
-	end)
+	end))
 
 	-- ==================== PASSWORD FRAME ====================
 	local pwFrame = Instance.new("Frame")
@@ -1853,7 +1863,7 @@ v1.0
 
 	-- Listen for rotation updates from server
 	if featuredUpdatedEvt then
-		featuredUpdatedEvt.OnClientEvent:Connect(function(newName, newTimeLeft)
+		table.insert(_guiConnections, featuredUpdatedEvt.OnClientEvent:Connect(function(newName, newTimeLeft)
 			featuredMorphName = newName
 			featuredTimeLeft  = newTimeLeft or 0
 			tabFeatured.Text  = "⭐ FEATURED: " .. newName
@@ -1861,12 +1871,13 @@ v1.0
 				buildButtons("")
 				openDetailPanel(newName)
 			end
-		end)
+		end))
 	end
 
 	-- Countdown timer for featured morph
+	_countdownActive = true
 	task.spawn(function()
-		while true do
+		while _countdownActive do
 			task.wait(1)
 			if featuredTimeLeft > 0 then
 				featuredTimeLeft = featuredTimeLeft - 1
