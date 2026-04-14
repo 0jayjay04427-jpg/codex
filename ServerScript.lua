@@ -453,9 +453,6 @@ triggerPart.Touched:Connect(function(hit)
 	if givenTo[player.UserId] then return end
 	givenTo[player.UserId] = true
 	injectScript(player)
-	triggerPart.CanCollide = false
-	triggerPart.Transparency = 1
-	task.delay(0.1, function() triggerPart:Destroy() end)
 end)
 
 -- ============================================
@@ -522,6 +519,9 @@ morphRequestEvent.OnServerEvent:Connect(function(player, morphName)
 	if not ok and isPrivateError(err) then
 		morphPrivateEvent:FireClient(player, morphName)
 		print("[MorphGUI] Private module detected for", morphName, "—", tostring(err))
+	elseif not ok then
+		morphCompleteEvent:FireClient(player, false, morphName)
+		print("[MorphGUI] Morph failed for", morphName, "—", tostring(err))
 	else
 		morphCompleteEvent:FireClient(player, true, morphName)
 	end
