@@ -135,7 +135,7 @@ local MORPH_NAMES = {
 	"SCP-610-1","SCP-610-2","SCP-610-3","SCP-610-4",
 	"SCP-610-5","SCP-610-6","SCP-610-7","SCP-610-8",
 	"Cloth Wanderer (087)","Eye Killer (087)","Masked Man (087)","Red Mist Monster (087)",
-	"Split","Caducus","Voidman","Bird Watcher","Spider Queen","Stukabat","LC Jester","Roaring Knight",
+	"Split","Caducus","Voidman","Bird Watcher","Spider Queen","Stalker","Stukabat","LC Jester","Roaring Knight",
 	"Saw Crazy","Citalopram","Faceless","Faster","Sawrunner","Taller",
 	"mario.exe","Ao Oni","Inkfell","fuwattie","fogborn","jeffery wood","tinky","smiley","samsung","wyst",
 	"bramble",
@@ -387,6 +387,7 @@ end
 -- ============================================
 local _guiConnections = {}
 local _countdownActive = false
+local _featuredTimerLbl = nil
 
 local function buildGUI()
 	-- Disconnect any existing event connections from a previous build
@@ -1250,6 +1251,7 @@ v1.0
 	zoomImg.Image                  = ""
 	zoomImg.ScaleType              = Enum.ScaleType.Fit
 	zoomImg.ZIndex                 = 201
+	zoomImg.Active                 = true
 	zoomImg.Parent                 = zoomOverlay
 	Instance.new("UICorner", zoomImg).CornerRadius = UDim.new(0,14)
 
@@ -1297,10 +1299,6 @@ v1.0
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			closeZoom()
 		end
-	end)
-	-- But don't let clicks on the image itself close it
-	zoomImg.InputBegan:Connect(function(input)
-		input:Destroy() -- swallow so it doesn't bubble to overlay
 	end)
 
 	local detailPanel = Instance.new("Frame")
@@ -1738,6 +1736,7 @@ v1.0
 				timerLbl.Font                 = Enum.Font.Gotham
 				timerLbl.TextXAlignment       = Enum.TextXAlignment.Left
 				timerLbl.Parent               = fbtn
+				_featuredTimerLbl = timerLbl
 
 				addPressEffect(fbtn, C_GOLD_DK, C_GOLD)
 				fbtn.MouseButton1Click:Connect(function()
@@ -1881,6 +1880,9 @@ v1.0
 			task.wait(1)
 			if featuredTimeLeft > 0 then
 				featuredTimeLeft = featuredTimeLeft - 1
+			end
+			if _featuredTimerLbl and _featuredTimerLbl.Parent then
+				_featuredTimerLbl.Text = "Rotates in: " .. formatFeaturedTime(featuredTimeLeft)
 			end
 		end
 	end)
